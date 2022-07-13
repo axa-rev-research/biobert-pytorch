@@ -62,7 +62,8 @@ class InputFeatures:
 
 
 class Split(Enum):
-    train = "train_dev"
+    # train = "train_dev"
+    train = "train"
     dev = "devel"
     test = "test"
 
@@ -252,10 +253,12 @@ def read_examples_from_file(data_dir, mode: Union[Split, str]) -> List[InputExam
                 words.append(splits[0])
                 if len(splits) > 1:
                     splits_replace = splits[-1].replace("\n", "")
-                    if splits_replace == 'O':
-                        labels.append(splits_replace)
-                    else:
-                        labels.append(splits_replace + "-bio")
+                    # if splits_replace == 'O':
+                    #     labels.append(splits_replace)
+                    # else:
+                    #     labels.append(splits_replace + "-bio")
+                    # ZQY: since we don't need the "-bio" suffix here
+                    labels.append(splits_replace)
                 else:
                     # Examples could have no label for mode = "test"
                     labels.append("O")
@@ -299,7 +302,7 @@ def convert_examples_to_features(
         label_ids = []
         for word, label in zip(example.words, example.labels):
             word_tokens = tokenizer.tokenize(word)
-            
+
             # bert-base-multilingual-cased sometimes output "nothing ([]) when calling tokenize with just a space.
             if len(word_tokens) > 0:
                 tokens.extend(word_tokens)
@@ -395,9 +398,10 @@ def get_labels(path: str) -> List[str]:
     if path:
         with open(path, "r") as f:
             labels = f.read().splitlines()
-            labels = [i+'-bio' if i != 'O' else 'O' for i in labels]
+            # labels = [i+'-bio' if i != 'O' else 'O' for i in labels]
         if "O" not in labels:
             labels = ["O"] + labels
+        # in i2b2-2010, would return ["B-problem", "B-test", "B-treatment", "I-problem", "I-test", "I-treatment", "O"]
         return labels
     else:
         # return ["O", "B-MISC", "I-MISC", "B-PER", "I-PER", "B-ORG", "I-ORG", "B-LOC", "I-LOC"]
