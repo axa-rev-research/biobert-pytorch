@@ -26,7 +26,11 @@ from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple
 
 import numpy as np
-from seqeval.metrics import f1_score, precision_score, recall_score
+# seqeval.metrics for strict mode
+# from seqeval.metrics import f1_score, precision_score, recall_score
+# own scripts for lenient mode
+from scripts.sequence_labeling import f1_score, precision_score, recall_score
+from scripts.scheme import IOB2
 from torch import nn
 
 from transformers import (
@@ -227,9 +231,9 @@ def main():
         preds_list, out_label_list = align_predictions(p.predictions, p.label_ids)
 
         return {
-            "precision": precision_score(out_label_list, preds_list),
-            "recall": recall_score(out_label_list, preds_list),
-            "f1": f1_score(out_label_list, preds_list),
+            "precision": precision_score(out_label_list, preds_list,mode=None),
+            "recall": recall_score(out_label_list, preds_list,mode=None),
+            "f1": f1_score(out_label_list, preds_list,mode=None),
         }
 
     # Initialize our Trainer
