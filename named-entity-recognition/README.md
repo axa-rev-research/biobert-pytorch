@@ -75,5 +75,17 @@ python run_ner.py \
 | LINNAEUS       |          89.49          |         80.25        |       84.62      |
 | S800           |          68.81          |         73.92        |       71.27      |
 
+
+## Benchmark Results
+
+### NLP-healthcare
+
+|         Task        |      DATA      |          AWS            |         Azure        |      Stanza      |      BioBERT     |
+|---------------------|----------------|:-----------------------:|:--------------------:|:----------------:|:----------------:|
+| Biomedical NER      | BC5CDR         |          86.96          |         89.68        |       88.30      |       88.30      |
+| Clinical NER        | i2b2 2010      |          86.96          |         86.96        |       86.96      |       88.30      |
+| PHI de-ID           | i2b2 2014      |          86.96          |         86.96        |       86.96      |       88.30      |
+| Sentence Similarity | BIOSSES        |          86.96          |         86.96        |       86.96      |       88.30      |
+
 ## Contact
 For help or issues using BioBERT-PyTorch, please create an issue and tag [@minstar](https://github.com/minstar).
