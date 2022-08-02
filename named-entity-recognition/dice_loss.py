@@ -91,16 +91,17 @@ class DiceLoss(nn.Module):
 
     def _multiple_class(self, input, target, logits_size, mask=None):
         flat_input = input
-        flat_target = F.one_hot(target, num_classes=logits_size).float() if self.index_label_position else target.float()
+        fill_target = torch.where(target==-100, 7, target)
+        flat_target = F.one_hot(fill_target, num_classes=logits_size+1).float() if self.index_label_position else target.float() #ZQY:get one more class for special tokens or empty tokens
         flat_input = torch.nn.Softmax(dim=1)(flat_input) if self.with_logits else flat_input
 
         if mask is not None:
             mask = mask.float()
-            # mask_expanded = mask.unsqueeze(dim=2)
-            flat_input = flat_input * mask
-            flat_target = flat_target * mask
+            mask_expanded = mask.unsqueeze(dim=2)
+            flat_input = flat_input * mask_expanded
+            flat_target = flat_target * mask_expanded
         else:
-            print(f"ZQY check target size: {target.size()}")
+            # print(f"ZQY check target size: {target.size()}")
             tmp_rand = torch.randn(target.size())
             mask = torch.ones_like(tmp_rand)
 
@@ -142,8 +143,8 @@ class DiceLoss(nn.Module):
         else:
             for label_idx in range(logits_size):
                 # pos_example = target == label_idx
-                flat_input_idx = flat_input[:, label_idx]
-                flat_target_idx = flat_target[:, label_idx]
+                flat_input_idx = flat_input[:, :, label_idx]
+                flat_target_idx = flat_target[:, :, label_idx]
 
                 # loss_idx = self._compute_dice_loss(flat_input_idx.view(-1, 1), flat_target_idx.view(-1, 1))
                 loss_idx = self._compute_dice_loss(flat_input_idx.reshape(-1, 1), flat_target_idx.reshape(-1, 1))

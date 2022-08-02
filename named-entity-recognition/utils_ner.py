@@ -80,7 +80,8 @@ if is_torch_available():
         """
 
         features: List[InputFeatures]
-        pad_token_label_id: int = nn.CrossEntropyLoss().ignore_index
+        # pad_token_label_id: int = nn.CrossEntropyLoss().ignore_index
+        pad_token_label_id: int = -100
         # Use cross entropy ignore_index as padding label id so that only
         # real label ids contribute to the loss later.
 
@@ -281,6 +282,7 @@ def convert_examples_to_features(
     pad_token=0,
     pad_token_segment_id=0,
     pad_token_label_id=-100,
+    # pad_token_label_id=7,
     sequence_a_segment_id=0,
     mask_padding_with_zero=True,
 ) -> List[InputFeatures]:

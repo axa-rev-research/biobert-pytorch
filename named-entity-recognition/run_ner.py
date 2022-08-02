@@ -16,6 +16,7 @@
 """ Fine-tuning the library models for named entity recognition on CoNLL-2003. """
 
 
+# from builtins import breakpoint
 import logging
 import os
 import sys
@@ -31,7 +32,9 @@ import numpy as np
 # own scripts for lenient mode
 from scripts.sequence_labeling import f1_score, precision_score, recall_score
 from scripts.scheme import IOB2
+import torch
 from torch import nn
+import torch.nn.functional as F
 
 from transformers import (
     AutoConfig,
@@ -45,6 +48,7 @@ from transformers import (
     set_seed,
 )
 from utils_ner import NerDataset, Split, get_labels
+from dice_loss import DiceLoss
 
 logger = logging.getLogger(__name__)
 
@@ -85,6 +89,10 @@ class DataTrainingArguments:
         default=None,
         metadata={"help": "Path to a file containing all labels. If not specified, CoNLL-2003 labels are used."},
     )
+    # labels: str = field(
+    #     default=None,
+    #     metadata={"help": "Path to a file containing all labels. If not specified, CoNLL-2003 labels are used."},
+    # )
     max_seq_length: int = field(
         default=128,
         metadata={
@@ -96,6 +104,19 @@ class DataTrainingArguments:
         default=False, metadata={"help": "Overwrite the cached training and evaluation sets"}
     )
 
+#customize the trainer with dice loss
+class Trainer_Dice(Trainer):
+    def compute_loss(self, model, inputs, return_outputs=False):
+        # labels = F.one_hot(inputs.get("labels"), num_classes=7)
+        labels = inputs.get("labels")
+        mask = inputs.get("attention_mask")
+        outputs = model(**inputs)
+        # print(f"labels size: {labels.size()}")
+        logits = outputs.get("logits")
+        # print(f"outputs logits size: {logits.size()}")
+        loss_fct = DiceLoss(with_logits=True, square_denominator=True, reduction="sum")
+        loss = loss_fct(logits, labels, mask)
+        return (loss, outputs) if return_outputs else loss
 
 def main():
     # See all possible arguments in src/transformers/training_args.py
@@ -222,6 +243,7 @@ def main():
         for i in range(batch_size):
             for j in range(seq_len):
                 if label_ids[i, j] != nn.CrossEntropyLoss().ignore_index:
+                # if label_ids[i, j] != 7:
                     out_label_list[i].append(label_map[label_ids[i][j]])
                     preds_list[i].append(label_map[preds[i][j]])
 
@@ -237,7 +259,15 @@ def main():
         }
 
     # Initialize our Trainer
-    trainer = Trainer(
+    # trainer = Trainer(
+    #     model=model,
+    #     args=training_args,
+    #     train_dataset=train_dataset,
+    #     eval_dataset=eval_dataset,
+    #     compute_metrics=compute_metrics,
+    # )
+
+    trainer = Trainer_Dice(
         model=model,
         args=training_args,
         train_dataset=train_dataset,
