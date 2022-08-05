@@ -133,5 +133,7 @@ dmypy.json
 
 # others
 output/
+analysis/
 .vscode/
 random.ipynb
+test.ipynb

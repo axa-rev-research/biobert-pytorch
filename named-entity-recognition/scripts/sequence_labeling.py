@@ -203,14 +203,17 @@ def get_entities(seq, suffix=False):
 
     # for nested list
     if any(isinstance(s, list) for s in seq):
-        seq = [item for sublist in seq for item in sublist + ['O']]
+        seq1 = [item for _, sublist in enumerate(seq) for item in sublist + ['O']] # record the label items
+        seq2 = [id for id, sublist in enumerate(seq) for _ in sublist + ['O']] # record the id of sentence
 
     prev_tag = 'O'
     prev_type = ''
     begin_offset = 0
     chunks = []
-    for i, chunk in enumerate(seq + ['O']):
-        _validate_chunk(chunk, suffix)
+    sent_flag = -1
+    cnt = 0
+    for i, chunk in enumerate(seq1 + ['O']):
+        # _validate_chunk(chunk, suffix)
 
         if suffix:
             tag = chunk[-1]
@@ -220,7 +223,12 @@ def get_entities(seq, suffix=False):
             type_ = chunk[1:].split('-', maxsplit=1)[-1] or '_'
 
         if end_of_chunk(prev_tag, tag, prev_type, type_):
-            chunks.append((prev_type, begin_offset, i - 1))
+            if sent_flag == seq2[i-1]:
+                cnt += 1
+            else:
+                cnt = 0
+            chunks.append((prev_type, begin_offset, i - 1, (seq2[i-1],cnt)))
+            sent_flag = seq2[i-1]
         if start_of_chunk(prev_tag, tag, prev_type, type_):
             begin_offset = i
         prev_tag = tag
