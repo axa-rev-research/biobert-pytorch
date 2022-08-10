@@ -309,7 +309,10 @@ def convert_examples_to_features(
             if len(word_tokens) > 0:
                 tokens.extend(word_tokens)
                 # Use the real label id for the first token of the word, and padding ids for the remaining tokens
-                label_ids.extend([label_map[label]] + [pad_token_label_id] * (len(word_tokens) - 1))
+                try:
+                    label_ids.extend([label_map[label]] + [pad_token_label_id] * (len(word_tokens) - 1))
+                except:
+                    print('wait')
 
         # Account for [CLS] and [SEP] with "- 2" and with "- 3" for RoBERTa.
         special_tokens_count = tokenizer.num_special_tokens_to_add()

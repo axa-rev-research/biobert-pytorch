@@ -16,7 +16,8 @@
 """ Fine-tuning the library models for named entity recognition on CoNLL-2003. """
 
 
-# from builtins import breakpoint
+# from builtins import breakpointcl
+import comet_ml
 import logging
 import os
 import sys
@@ -46,7 +47,11 @@ from transformers import (
     Trainer,
     TrainingArguments,
     set_seed,
+    BertModel,
+    BertConfig,
+    BertTokenizer
 )
+
 from utils_ner import NerDataset, Split, get_labels
 from dice_loss import DiceLoss
 
@@ -123,6 +128,13 @@ def main():
     # or by passing the --help flag to this script.
     # We now keep distinct sets of args, for a cleaner separation of concerns.
 
+    # # Create an experiment with your api key
+    # experiment = Experiment(
+    #     api_key="29b8AJjaLepONmtn3DwXRvLx0",
+    #     project_name="general",
+    #     workspace="qinyuezheng",
+    # )
+
     parser = HfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments))
     if len(sys.argv) == 2 and sys.argv[1].endswith(".json"):
         # If we pass only one argument to the script and it's the path to a json file,
@@ -192,6 +204,8 @@ def main():
         config=config,
         cache_dir=model_args.cache_dir,
     )
+    # model = AutoModel.from_config(config)
+
     '''
     model_to_save = AutoModel.from_pretrained(
         model_args.model_name_or_path,

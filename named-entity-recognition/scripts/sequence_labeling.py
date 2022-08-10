@@ -130,9 +130,9 @@ def precision_recall_fscore_support(y_true: List[List[str]],
         # lenient score
         entities_true = defaultdict(set)
         entities_pred = defaultdict(set)
-        for type_name, start, end in get_entities(y_true, suffix):
+        for type_name, start, end, _ in get_entities(y_true, suffix):
             entities_true[type_name].add((start, end))
-        for type_name, start, end in get_entities(y_pred, suffix):
+        for type_name, start, end, _ in get_entities(y_pred, suffix):
             entities_pred[type_name].add((start, end))
         target_names = sorted(set(entities_true.keys()) | set(entities_pred.keys()))
 
@@ -715,8 +715,8 @@ def classification_report(y_true, y_pred,
                   suffix=suffix
                   )
 
-    target_names_true = {type_name for type_name, _, _ in get_entities(y_true, suffix)}
-    target_names_pred = {type_name for type_name, _, _ in get_entities(y_pred, suffix)}
+    target_names_true = {type_name for type_name, _, _, _ in get_entities(y_true, suffix)}
+    target_names_pred = {type_name for type_name, _, _, _ in get_entities(y_pred, suffix)}
     target_names = sorted(target_names_true | target_names_pred)
 
     if output_dict:

@@ -1,6 +1,6 @@
 #!/bin/bash
 # ENTITIES="NCBI-disease BC5CDR-disease BC5CDR-chem BC4CHEMD JNLPBA BC2GM linnaeus s800"
-ENTITIES="i2b2-2010/processed/merged"
+ENTITIES="i2b2-2014/processed"
 MAX_LENGTH=128
 
 for ENTITY in $ENTITIES
