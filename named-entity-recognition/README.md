@@ -80,12 +80,11 @@ python run_ner.py \
 
 ### NLP-healthcare
 
-|         Task        |      DATA      |          AWS            |         Azure        |      Stanza      |      BioBERT     |
-|---------------------|----------------|:-----------------------:|:--------------------:|:----------------:|:----------------:|
-| Biomedical NER      | BC5CDR         |          86.96          |         89.68        |       88.30      |       88.30      |
-| Clinical NER        | i2b2 2010      |          86.96          |         86.96        |       86.96      |       88.30      |
-| PHI de-ID           | i2b2 2014      |          86.96          |         86.96        |       86.96      |       88.30      |
-| Sentence Similarity | BIOSSES        |          86.96          |         86.96        |       86.96      |       88.30      |
+|         Task        |      DATA      |        AWS        |        Azure       |      Stanza      |     BioBERT (s/l)    |     ClinicalBERT  (s/l)    |
+|---------------------|----------------|:-----------------:|:------------------:|:----------------:|:--------------------:|:--------------------------:|
+| Biomedical NER      | BC5CDR         |       71.50       |        78.90       |       91.50      |      80.36/83.03     |         79.44/82.90        |
+| Clinical NER        | i2b2 2010      |       79.80       |        83.20       |       95.10      |      86.44/90.07     |         86.28/90.16        |
+| PHI de-ID           | i2b2 2014      |       xxxxx       |        xxxxx       |       xxxxx      |      93.82/94.17     |         88.30/88.30        |
 
 ## Contact
 For help or issues using BioBERT-PyTorch, please create an issue and tag [@minstar](https://github.com/minstar).
