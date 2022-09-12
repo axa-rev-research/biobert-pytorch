@@ -220,7 +220,10 @@ def get_entities(seq, suffix=False):
             type_ = chunk[:-1].rsplit('-', maxsplit=1)[0] or '_'
         else:
             tag = chunk[0]
-            type_ = chunk[1:].split('-', maxsplit=1)[-1] or '_'
+            if len(chunk)>1 or chunk=='O':
+                type_ = chunk[1:].split('-', maxsplit=1)[-1] or '_'
+            elif chunk == 'B' or chunk == 'I':  # for BC5CDR
+                type_ = 'problem'
 
         if end_of_chunk(prev_tag, tag, prev_type, type_):
             if sent_flag == seq2[i-1]:

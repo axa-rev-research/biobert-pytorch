@@ -30,9 +30,10 @@ from typing import Dict, List, Optional, Tuple
 import numpy as np
 # seqeval.metrics for strict mode
 # from seqeval.metrics import f1_score, precision_score, recall_score
-# own scripts for lenient mode
+# #  own scripts for lenient mode
 from scripts.sequence_labeling import f1_score, precision_score, recall_score
 from scripts.scheme import IOB2
+
 import torch
 from torch import nn
 import torch.nn.functional as F
@@ -109,31 +110,24 @@ class DataTrainingArguments:
         default=False, metadata={"help": "Overwrite the cached training and evaluation sets"}
     )
 
-#customize the trainer with dice loss
-class Trainer_Dice(Trainer):
-    def compute_loss(self, model, inputs, return_outputs=False):
-        # labels = F.one_hot(inputs.get("labels"), num_classes=7)
-        labels = inputs.get("labels")
-        mask = inputs.get("attention_mask")
-        outputs = model(**inputs)
-        # print(f"labels size: {labels.size()}")
-        logits = outputs.get("logits")
-        # print(f"outputs logits size: {logits.size()}")
-        loss_fct = DiceLoss(with_logits=True, square_denominator=True, reduction="sum")
-        loss = loss_fct(logits, labels, mask)
-        return (loss, outputs) if return_outputs else loss
+# #customize the trainer with dice loss
+# class Trainer_Dice(Trainer):
+#     def compute_loss(self, model, inputs, return_outputs=False):
+#         # labels = F.one_hot(inputs.get("labels"), num_classes=7)
+#         labels = inputs.get("labels")
+#         mask = inputs.get("attention_mask")
+#         outputs = model(**inputs)
+#         # print(f"labels size: {labels.size()}")
+#         logits = outputs.get("logits")
+#         # print(f"outputs logits size: {logits.size()}")
+#         loss_fct = DiceLoss(with_logits=True, square_denominator=True, reduction="sum")
+#         loss = loss_fct(logits, labels, mask)
+#         return (loss, outputs) if return_outputs else loss
 
 def main():
     # See all possible arguments in src/transformers/training_args.py
     # or by passing the --help flag to this script.
     # We now keep distinct sets of args, for a cleaner separation of concerns.
-
-    # # Create an experiment with your api key
-    # experiment = Experiment(
-    #     api_key="29b8AJjaLepONmtn3DwXRvLx0",
-    #     project_name="general",
-    #     workspace="qinyuezheng",
-    # )
 
     parser = HfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments))
     if len(sys.argv) == 2 and sys.argv[1].endswith(".json"):
@@ -204,7 +198,6 @@ def main():
         config=config,
         cache_dir=model_args.cache_dir,
     )
-    # model = AutoModel.from_config(config)
 
     '''
     model_to_save = AutoModel.from_pretrained(

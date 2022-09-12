@@ -137,3 +137,5 @@ analysis_2010/
 .vscode/
 random.ipynb
 test.ipynb
+run_ner_strict.sh
+run_ner_lenient.sh
